@@ -18,8 +18,16 @@ const postBooksDetails = (req, res) => {
   res.status(200).send("Books Details created");
 };
 
+const checkData = (req, res, next, val) => {
+  const name = req.params.name;
+  if (!name) {
+    res.send("Name not passed");
+  }
+  next();
+};
+
 booksRouter.route("/").get(getBooksDetails);
-booksRouter.route("/:id").post(postBooksDetails);
+booksRouter.route("/:id").post(checkData, postBooksDetails);
 
 app.use("/api/v1/books", booksRouter);
 
