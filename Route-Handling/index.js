@@ -4,6 +4,8 @@ const PORT = 3000;
 
 const app = express();
 
+const booksRouter = express.Router();
+
 app.use(morgan("dev"));
 app.use(express.json());
 
@@ -16,8 +18,10 @@ const postBooksDetails = (req, res) => {
   res.status(200).send("Books Details created");
 };
 
-app.route("/api/v1/books").get(getBooksDetails);
-app.route("/api/v1/books/:id").post(postBooksDetails);
+booksRouter.route("/").get(getBooksDetails);
+booksRouter.route("/:id").post(postBooksDetails);
+
+app.use("/api/v1/books", booksRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running at ${PORT}...`);
