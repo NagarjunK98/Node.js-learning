@@ -11,27 +11,29 @@ dotenv.config({ path: "./../config.env" }); // Create a file called config.env a
 
 app = express();
 
+const booksRouter = express.Router();
+
 app.use(morgan("dev"));
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  const { name, rating, description } = req.query;
-  const input = new Books({
-    name: name,
-    rating: rating,
-    description: description,
-  });
+const checkData = (req, res, next) => {
+  if (req.body.name && req.body.rating) {
+    next();
+  } else {
+    res.send("Data not in correct format");
+  }
+};
+const postBookDetails = async (req, res) => {
+  try {
+    const result = await Books.create(req.body);
+    res.send({ status: "Inserted document", id: result._id });
+  } catch (err) {
+    console.log(err.message);
+  }
+};
 
-  input
-    .save()
-    .then((doc) => {
-      console.log("Inserted document", doc._id);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-  console.log(name, rating, description);
-  res.send(name, rating, description);
-});
+booksRouter.route("/books").post(checkData, postBookDetails);
+
+app.use("/api/v1/db", booksRouter);
 
 app.listen(PORT, console.log(`Express running on ${PORT}..`));
