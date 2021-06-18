@@ -20,7 +20,7 @@ const checkData = (req, res, next) => {
   if (req.body.name && req.body.rating) {
     next();
   } else {
-    res.send("Data not in correct format");
+    res.status(400).send("Data not in correct format");
   }
 };
 const postBookDetails = async (req, res) => {
@@ -32,7 +32,52 @@ const postBookDetails = async (req, res) => {
   }
 };
 
-booksRouter.route("/books").post(checkData, postBookDetails);
+const getBookDetails = async (req, res) => {
+  try {
+    const name = req.query.name;
+    const result = await Books.find({ name: name });
+    if (result.length > 0) {
+      res.status(200).send({ data: result });
+    } else {
+      res.status(200).send("Data not found");
+    }
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+};
+
+const updateBookDetails = async (req, res) => {
+  try {
+    const status = await Books.findByIdAndUpdate(req.query.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    console.log(status);
+    res.status(200).send("Updated Successfully");
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+};
+
+const deleteBookDetails = async (req, res) => {
+  try {
+    const status = await Books.findByIdAndDelete(req.query.id);
+    if (status) {
+      res.status(200).send("Deleted Successfully");
+    } else {
+      res.status(404).send("Details not found to delete");
+    }
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+};
+
+booksRouter
+  .route("/books")
+  .get(getBookDetails)
+  .post(checkData, postBookDetails)
+  .patch(updateBookDetails)
+  .delete(deleteBookDetails);
 
 app.use("/api/v1/db", booksRouter);
 
