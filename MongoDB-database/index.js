@@ -35,7 +35,12 @@ const postBookDetails = async (req, res) => {
 const getBookDetails = async (req, res) => {
   try {
     const name = req.query.name;
-    const result = await Books.find({ name: name });
+    let resultQuery = Books.find({ name: name });
+    if (req.query.sort) {
+      resultQuery = resultQuery.sort(req.query.sort);
+    }
+    const result = await resultQuery;
+
     if (result.length > 0) {
       res.status(200).send({ data: result });
     } else {
