@@ -39,6 +39,10 @@ const getBookDetails = async (req, res) => {
     if (req.query.sort) {
       resultQuery = resultQuery.sort(req.query.sort);
     }
+    if (req.query.fields) {
+      let fields = req.query.fields.split(",").join(" ");
+      resultQuery = resultQuery.select(fields);
+    }
     const result = await resultQuery;
 
     if (result.length > 0) {
