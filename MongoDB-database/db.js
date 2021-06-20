@@ -45,6 +45,21 @@ const bookSchema = new mongoose.Schema({
   },
 });
 
+// Document Middleware
+bookSchema.pre("save", function (next) {
+  this.duration = Date.now();
+  next();
+});
+
+bookSchema.post("save", function (doc, next) {
+  console.log(
+    "Took took to create document " +
+      (Date.now() - this.duration) +
+      " Milliseconds"
+  );
+  next();
+});
+
 // Create a model
 const Books = mongoose.model("Books", bookSchema);
 

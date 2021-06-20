@@ -2,7 +2,7 @@ const express = require("express");
 const morgan = require("morgan");
 const Books = require("./db");
 
-const PORT = 3000;
+const PORT = process.env.PORT;
 
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
