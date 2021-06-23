@@ -29,14 +29,18 @@ const bookSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, "A book name is required"],
+    trim: true,
   },
   rating: {
     type: Number,
     required: true,
+    min: 1.0,
+    max: 5.0,
   },
   description: {
     type: String,
     required: false,
+    trim: true,
   },
   createdAt: {
     type: Date,
