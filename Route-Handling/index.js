@@ -1,6 +1,10 @@
 const express = require("express");
+const dotenv = require("dotenv");
 const morgan = require("morgan");
-const PORT = 3000;
+
+dotenv.config({ path: "./../config.env" });
+
+const PORT = process.env.PORT;
 
 const app = express();
 
@@ -30,6 +34,10 @@ booksRouter.route("/").get(getBooksDetails);
 booksRouter.route("/:id").post(checkData, postBooksDetails);
 
 app.use("/api/v1/books", booksRouter);
+// Handling Unhandled Routes
+app.all("*", (req, res, next) => {
+  res.status(404).send(`Route ${req.originalUrl} Not found`);
+});
 
 app.listen(PORT, () => {
   console.log(`Server running at ${PORT}...`);
